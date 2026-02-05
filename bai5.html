@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HR Management</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6fb;
+    }
+
+    header {
+      background: #222;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h2 {
+      margin: 0;
+    }
+
+    nav a {
+      color: white;
+      margin: 0 12px;
+      text-decoration: none;
+      opacity: 0.8;
+    }
+
+    nav a:hover {
+      opacity: 1;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 8px;
+    }
+
+    .search-box input {
+      padding: 8px;
+      width: 220px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+    }
+
+    .search-box button {
+      padding: 8px 15px;
+      border: 1px solid white;
+      background: transparent;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .container {
+      width: 85%;
+      margin: 40px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .top h1 {
+      margin: 0;
+      font-size: 35px;
+    }
+
+    .add-btn {
+      background: #0d6efd;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      font-size: 18px;
+      background: #f8f8f8;
+    }
+
+    .btn-edit {
+      background: orange;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-delete {
+      background: crimson;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: white;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      width: 650px;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      background: #0d6efd;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+    }
+
+    .close {
+      font-size: 26px;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 25px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+
+    .sex-box {
+      grid-column: span 2;
+    }
+
+    .sex-options {
+      display: flex;
+      gap: 30px;
+      margin-top: 8px;
+    }
+
+    .modal-footer {
+      padding: 15px 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .btn-save {
+      background: green;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .btn-cancel {
+      background: gray;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h2>HR Management</h2>
+
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Contact</a>
+    </nav>
+
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search...">
+      <button onclick="searchEmployee()">Search</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="top">
+      <h1>Employee</h1>
+      <button class="add-btn" onclick="openModal()">+ Add</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Position</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="employeeTable"></tbody>
+    </table>
+  </div>
+
+  <div class="modal" id="employeeModal">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h2 id="modalTitle">New Employee</h2>
+        <span class="close" onclick="closeModal()">&times;</span>
+      </div>
+
+      <div class="modal-body">
+        <div>
+          <label>Name</label>
+          <input type="text" id="name">
+        </div>
+
+        <div>
+          <label>Email</label>
+          <input type="text" id="email">
+        </div>
+
+        <div>
+          <label>Phone</label>
+          <input type="text" id="phone" maxlength="10">
+        </div>
+
+        <div>
+          <label>Position</label>
+          <select id="position">
+            <option value="">-- Select Position --</option>
+            <option>Staff</option>
+            <option>Manager</option>
+            <option>CEO</option>
+          </select>
+        </div>
+
+        <div class="sex-box">
+          <label>Sex</label>
+          <div class="sex-options">
+            <label><input type="radio" name="sex" value="Male"> Male</label>
+            <label><input type="radio" name="sex" value="Female"> Female</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-save" onclick="saveEmployee()">Save</button>
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let employees = [
+      { id: 1, name: "Fatima Beatriz", email: "fatima@gmail.com", phone: "0985674321", position: "Staff" },
+      { id: 2, name: "Gabriel Hanna", email: "gabriel@gmail.com", phone: "0353674231", position: "Staff" },
+      { id: 3, name: "Charles Diya", email: "charles@gmail.com", phone: "0347658833", position: "Staff" },
+      { id: 4, name: "Frank Lamdo", email: "frank@gmail.com", phone: "0975444768", position: "Manager" },
+      { id: 5, name: "Louis Tom", email: "louis@gmail.com", phone: "0789568223", position: "Staff" }
+    ];
+
+    let editId = null;
+
+    function renderTable(data = employees) {
+      let table = document.getElementById("employeeTable");
+      table.innerHTML = "";
+
+      data.forEach(emp => {
+        table.innerHTML += `
+          <tr>
+            <td>${emp.id}</td>
+            <td>${emp.name}</td>
+            <td>${emp.email}</td>
+            <td>${emp.phone}</td>
+            <td>${emp.position}</td>
+            <td>
+              <button class="btn-edit" onclick="editEmployee(${emp.id})">Edit</button>
+              <button class="btn-delete" onclick="deleteEmployee(${emp.id})">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function openModal() {
+      document.getElementById("employeeModal").style.display = "flex";
+      document.getElementById("modalTitle").innerText = "New Employee";
+      clearForm();
+      editId = null;
+    }
+
+    function closeModal() {
+      document.getElementById("employeeModal").style.display = "none";
+    }
+
+    function clearForm() {
+      document.getElementById("name").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("position").value = "";
+      document.querySelectorAll("input[name='sex']").forEach(r => r.checked = false);
+    }
+
+    function saveEmployee() {
+      let name = document.getElementById("name").value.trim();
+      let email = document.getElementById("email").value.trim();
+      let phone = document.getElementById("phone").value.trim();
+      let position = document.getElementById("position").value;
+
+      if (!name || !email || !phone || !position) {
+        alert("Vui lòng nhập đầy đủ thông tin!");
+        return;
+      }
+
+      let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        alert("Email không đúng định dạng!");
+        return;
+      }
+
+      let phonePattern = /^0\d{9}$/;
+      if (!phonePattern.test(phone)) {
+        alert("Số điện thoại phải bắt đầu bằng 0 và đủ 10 số!");
+        return;
+      }
+
+      let emailExists = employees.some(emp =>
+        emp.email === email && emp.id !== editId
+      );
+      if (emailExists) {
+        alert("Email này đã tồn tại!");
+        return;
+      }
+
+      let phoneExists = employees.some(emp =>
+        emp.phone === phone && emp.id !== editId
+      );
+      if (phoneExists) {
+        alert("Số điện thoại này đã tồn tại!");
+        return;
+      }
+
+      if (editId) {
+        employees = employees.map(emp =>
+          emp.id === editId ? { ...emp, name, email, phone, position } : emp
+        );
+      } else {
+        employees.push({
+          id: employees.length + 1,
+          name,
+          email,
+          phone,
+          position
+        });
+      }
+
+      closeModal();
+      renderTable();
+    }
+
+    function editEmployee(id) {
+      let emp = employees.find(e => e.id === id);
+      editId = id;
+
+      openModal();
+      document.getElementById("modalTitle").innerText = "Edit Employee";
+
+      document.getElementById("name").value = emp.name;
+      document.getElementById("email").value = emp.email;
+      document.getElementById("phone").value = emp.phone;
+      document.getElementById("position").value = emp.position;
+    }
+
+    function deleteEmployee(id) {
+      if (confirm("Bạn có muốn xóa không?")) {
+        employees = employees.filter(emp => emp.id !== id);
+        renderTable();
+      }
+    }
+
+    function searchEmployee() {
+      let keyword = document.getElementById("searchInput").value.toLowerCase();
+      let filtered = employees.filter(emp =>
+        emp.name.toLowerCase().includes(keyword) ||
+        emp.email.toLowerCase().includes(keyword)
+      );
+      renderTable(filtered);
+    }
+
+    renderTable();
+  </script>
+
+</body>
+</html>

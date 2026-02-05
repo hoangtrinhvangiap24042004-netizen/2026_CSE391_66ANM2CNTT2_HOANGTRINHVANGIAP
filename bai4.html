@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employee Form Full</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #ddd;
+      margin: 0;
+      padding: 30px;
+    }
+
+    .container {
+      width: 900px;
+      margin: auto;
+      background: #f8f8f8;
+      border: 1px solid #aaa;
+      padding: 25px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.3);
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 20px 0 10px;
+      border-bottom: 2px solid #999;
+      padding-bottom: 5px;
+    }
+
+    .row {
+      display: flex;
+      align-items: flex-start;
+      margin: 10px 0;
+    }
+
+    label {
+      width: 200px;
+      font-weight: bold;
+      font-size: 14px;
+      padding-top: 6px;
+    }
+
+    input, select {
+      width: 620px;
+      padding: 6px;
+      border: 1px solid #777;
+      border-radius: 2px;
+    }
+
+    .radio-group, .check-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding-top: 4px;
+    }
+
+    .radio-group input,
+    .check-group input {
+      width: auto;
+      margin-right: 6px;
+    }
+
+    .notes-box {
+      width: 620px;
+      border: 1px solid #777;
+      background: white;
+    }
+
+    .toolbar {
+      background: #eee;
+      border-bottom: 1px solid #999;
+      padding: 5px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .toolbar button, .toolbar select {
+      padding: 4px 7px;
+      border: 1px solid #aaa;
+      background: white;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    .toolbar button:hover {
+      background: #ddd;
+    }
+
+    .editor {
+      min-height: 170px;
+      padding: 10px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    .captcha-svg {
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .buttons button {
+      padding: 10px 22px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      color: white;
+      border-radius: 3px;
+      font-size: 14px;
+    }
+
+    .submit-btn {
+      background: #444;
+    }
+
+    .cancel-btn {
+      background: #777;
+    }
+
+    .required {
+      margin-top: 15px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+<form>
+
+  <h2>Basic Info</h2>
+
+  <div class="row"><label>Employee ID</label><input type="text" value="9" readonly></div>
+  <div class="row"><label>Last Name</label><input type="text" value="Dodsworth"></div>
+  <div class="row"><label>First Name</label><input type="text" value="Anne"></div>
+
+  <div class="row">
+    <label>Gender</label>
+    <div class="radio-group">
+      <label><input type="radio" name="gender">Male</label>
+      <label><input type="radio" name="gender">Female</label>
+      <label><input type="radio" name="gender">XXX</label>
+      <label><input type="radio" name="gender" checked>ZZZ</label>
+    </div>
+  </div>
+
+  <div class="row"><label>Title</label><input type="text" value="Sales Representative"></div>
+  <div class="row"><label>Suffix</label><input type="text" value="Ms."></div>
+  <div class="row"><label>BirthDate</label><input type="text" value="1969-07-02 00:00:00"></div>
+  <div class="row"><label>HireDate</label><input type="text" value="1994-11-15 00:00:00"></div>
+  <div class="row"><label>SSN #</label><input type="text"></div>
+
+  <div class="row">
+    <label>Reports To</label>
+    <select>
+      <option>Buchanan</option>
+      <option>Fuller</option>
+      <option>Leverling</option>
+    </select>
+  </div>
+
+  <h2>Contact Info</h2>
+
+  <div class="row"><label>Email</label><input type="email" placeholder="name@example.com"></div>
+  <div class="row"><label>Address</label><input type="text" value="7 Houndstooth Rd."></div>
+  <div class="row"><label>City</label><input type="text" value="London"></div>
+  <div class="row"><label>Region</label><input type="text"></div>
+  <div class="row"><label>Postal Code</label><input type="text" value="WG2 7LT"></div>
+
+  <div class="row">
+    <label>Country</label>
+    <select>
+      <option>Russian Federation</option>
+      <option>United States</option>
+      <option>Viet Nam</option>
+    </select>
+  </div>
+
+  <div class="row"><label>US Home Phone</label><input type="text" value="(234)234-2342"></div>
+  <div class="row"><label>Photo</label><input type="text" value="EmpID9.bmp"></div>
+
+  <h2>Optional Info</h2>
+
+  <div class="row">
+    <label>Notes</label>
+    <div class="notes-box">
+
+      <div class="toolbar">
+        <button type="button" onclick="cmd('bold')">B</button>
+        <button type="button" onclick="cmd('italic')">I</button>
+        <button type="button" onclick="cmd('underline')">U</button>
+
+        <button type="button" onclick="cmd('justifyLeft')">⟸</button>
+        <button type="button" onclick="cmd('justifyCenter')">≡</button>
+        <button type="button" onclick="cmd('justifyRight')">⟹</button>
+
+        <button type="button" onclick="cmd('insertUnorderedList')">• List</button>
+        <button type="button" onclick="cmd('undo')">↶</button>
+        <button type="button" onclick="cmd('redo')">↷</button>
+
+        <select onchange="cmd('formatBlock', this.value)">
+          <option value="p">Normal</option>
+          <option value="h1">H1</option>
+          <option value="h2">H2</option>
+          <option value="h3">H3</option>
+        </select>
+      </div>
+
+      <div class="editor" contenteditable="true">
+        Anne has a BA degree in English from St. Lawrence College.<br>
+        She is fluent in French and German. ZZZ<br><br>
+        She also has experience working with international customers
+        and managing sales reports for the company.
+      </div>
+
+    </div>
+  </div>
+
+  <div class="row">
+    <label>Preferred Shift</label>
+    <div class="check-group">
+      <label><input type="checkbox">Regular</label>
+      <label><input type="checkbox" checked>Gravy Yard</label>
+    </div>
+  </div>
+
+  <div class="row">
+    <label>Active?</label>
+    <input type="checkbox" checked style="width:auto;">
+  </div>
+
+  <div class="row">
+    <label>Are you human?</label>
+    <div>
+      <svg class="captcha-svg" width="250" height="60" onclick="generateCaptcha()">
+        <text id="captchaText"
+              x="10" y="45"
+              font-size="42"
+              font-family="monospace"
+              fill="black">
+          TIDAWO
+        </text>
+      </svg>
+
+      <input type="text" placeholder="Type captcha here">
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button class="submit-btn" type="submit">Submit</button>
+    <button class="cancel-btn" type="reset">Cancel</button>
+  </div>
+
+  <p class="required">* required</p>
+
+</form>
+
+</div>
+
+<script>
+  function cmd(command, value = null) {
+    document.execCommand(command, false, value);
+  }
+
+  function generateCaptcha() {
+    let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let captcha = "";
+    for (let i = 0; i < 6; i++) {
+      captcha += chars[Math.floor(Math.random() * chars.length)];
+    }
+    document.getElementById("captchaText").textContent = captcha;
+  }
+</script>
+
+</body>
+</html>
