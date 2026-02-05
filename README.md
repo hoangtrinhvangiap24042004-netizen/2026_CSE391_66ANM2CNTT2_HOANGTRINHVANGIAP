@@ -1,7 +1,7 @@
 # Bài thực hành số 1
 
 ## Giới thiệu
-Đây là bài thực hành số 1 của sinh viên, nhằm luyện tập và áp dụng các kiến thức cơ bản trong môn học.
+Đây là bài thực hành số 1, nhằm luyện tập và áp dụng các kiến thức cơ bản trong môn học.
 
 ## Nội dung
 - Thực hiện các yêu cầu của bài thực hành
