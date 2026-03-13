@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi-step Form</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 24px;
+      color: #222;
+    }
+
+    .progress-section {
+      margin-bottom: 28px;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .progress-text {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .step-title {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .progress-bar-wrapper {
+      width: 100%;
+      height: 14px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 33.33%;
+      background: linear-gradient(90deg, #007bff, #00bfff);
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+
+    .step {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 7px;
+      color: #222;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid #cfcfcf;
+      border-radius: 8px;
+      outline: none;
+      font-size: 15px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.12);
+    }
+
+    .error-border {
+      border-color: #dc3545 !important;
+    }
+
+    .success-border {
+      border-color: #198754 !important;
+    }
+
+    .error {
+      display: block;
+      color: #dc3545;
+      font-size: 14px;
+      margin-top: 6px;
+      min-height: 18px;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 22px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 12px 18px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.25s;
+      min-width: 130px;
+    }
+
+    .btn-prev {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-prev:hover {
+      background: #565e64;
+    }
+
+    .btn-next {
+      background: #007bff;
+      color: white;
+    }
+
+    .btn-next:hover {
+      background: #0056b3;
+    }
+
+    .btn-submit {
+      background: #198754;
+      color: white;
+    }
+
+    .btn-submit:hover {
+      background: #146c43;
+    }
+
+    .summary-box {
+      background: #f8f9fa;
+      border: 1px solid #e3e6ea;
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    .summary-item {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid #e6e6e6;
+    }
+
+    .summary-item:last-child {
+      border-bottom: none;
+    }
+
+    .summary-label {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .summary-value {
+      color: #555;
+      word-break: break-word;
+    }
+
+    @media (max-width: 600px) {
+      .summary-item {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Form Đăng Ký Nhiều Bước</h1>
+
+    <div class="progress-section">
+      <div class="progress-top">
+        <div class="progress-text" id="progressText">Bước 1 / 3</div>
+        <div class="step-title" id="stepTitle">Thông tin cá nhân</div>
+      </div>
+      <div class="progress-bar-wrapper">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </div>
+
+    <form id="multiStepForm" novalidate>
+      <!-- BƯỚC 1 -->
+      <div class="step active" id="step1">
+        <div class="form-group">
+          <label for="hoTen">Họ tên</label>
+          <input type="text" id="hoTen" name="hoTen" maxlength="50" />
+          <span class="error" id="hoTenError"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="ngaySinh">Ngày sinh</label>
+          <input type="date" id="ngaySinh" name="ngaySinh" />
+          <span class="error" id="ngaySinhError"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="gioiTinh">Giới tính</label>
+          <select id="gioiTinh" name="gioiTinh">
+            <option value="">-- Chọn giới tính --</option>
+            <option value="Nam">Nam</option>
+            <option value="Nữ">Nữ</option>
+            <option value="Khác">Khác</option>
+          </select>
+          <span class="error" id="gioiTinhError"></span>
+        </div>
+
+        <div class="button-group">
+          <div></div>
+          <button type="button" class="btn-next" id="nextBtn1">Tiếp theo</button>
+        </div>
+      </div>
+
+      <!-- BƯỚC 2 -->
+      <div class="step" id="step2">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="text" id="email" name="email" />
+          <span class="error" id="emailError"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="matKhau">Mật khẩu</label>
+          <input type="password" id="matKhau" name="matKhau" />
+          <span class="error" id="matKhauError"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="xacNhanMatKhau">Xác nhận mật khẩu</label>
+          <input
+            type="password"
+            id="xacNhanMatKhau"
+            name="xacNhanMatKhau"
+          />
+          <span class="error" id="xacNhanMatKhauError"></span>
+        </div>
+
+        <div class="button-group">
+          <button type="button" class="btn-prev" id="prevBtn2">Quay lại</button>
+          <button type="button" class="btn-next" id="nextBtn2">Tiếp theo</button>
+        </div>
+      </div>
+
+      <!-- BƯỚC 3 -->
+      <div class="step" id="step3">
+        <div class="summary-box">
+          <div class="summary-item">
+            <div class="summary-label">Họ tên</div>
+            <div class="summary-value" id="confirmHoTen"></div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">Ngày sinh</div>
+            <div class="summary-value" id="confirmNgaySinh"></div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">Giới tính</div>
+            <div class="summary-value" id="confirmGioiTinh"></div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">Email</div>
+            <div class="summary-value" id="confirmEmail"></div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">Mật khẩu</div>
+            <div class="summary-value" id="confirmMatKhau"></div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">Xác nhận mật khẩu</div>
+            <div class="summary-value" id="confirmXacNhanMatKhau"></div>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button type="button" class="btn-prev" id="prevBtn3">Quay lại</button>
+          <button type="submit" class="btn-submit">Xác nhận đăng ký</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const totalSteps = 3;
+    let currentStep = 1;
+
+    const form = document.getElementById("multiStepForm");
+
+    const hoTen = document.getElementById("hoTen");
+    const ngaySinh = document.getElementById("ngaySinh");
+    const gioiTinh = document.getElementById("gioiTinh");
+    const email = document.getElementById("email");
+    const matKhau = document.getElementById("matKhau");
+    const xacNhanMatKhau = document.getElementById("xacNhanMatKhau");
+
+    const hoTenError = document.getElementById("hoTenError");
+    const ngaySinhError = document.getElementById("ngaySinhError");
+    const gioiTinhError = document.getElementById("gioiTinhError");
+    const emailError = document.getElementById("emailError");
+    const matKhauError = document.getElementById("matKhauError");
+    const xacNhanMatKhauError = document.getElementById("xacNhanMatKhauError");
+
+    const progressText = document.getElementById("progressText");
+    const stepTitle = document.getElementById("stepTitle");
+    const progressBar = document.getElementById("progressBar");
+
+    const nextBtn1 = document.getElementById("nextBtn1");
+    const nextBtn2 = document.getElementById("nextBtn2");
+    const prevBtn2 = document.getElementById("prevBtn2");
+    const prevBtn3 = document.getElementById("prevBtn3");
+
+    const confirmHoTen = document.getElementById("confirmHoTen");
+    const confirmNgaySinh = document.getElementById("confirmNgaySinh");
+    const confirmGioiTinh = document.getElementById("confirmGioiTinh");
+    const confirmEmail = document.getElementById("confirmEmail");
+    const confirmMatKhau = document.getElementById("confirmMatKhau");
+    const confirmXacNhanMatKhau = document.getElementById("confirmXacNhanMatKhau");
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const hoTenRegex = /^[a-zA-ZÀ-ỹ\s]+$/;
+    const matKhauRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+    function hienThiLoi(inputElement, errorElement, message) {
+      errorElement.textContent = message;
+      inputElement.classList.add("error-border");
+      inputElement.classList.remove("success-border");
+    }
+
+    function hienThiHopLe(inputElement, errorElement) {
+      errorElement.textContent = "";
+      inputElement.classList.remove("error-border");
+      inputElement.classList.add("success-border");
+    }
+
+    function xoaTrangThai(inputElement, errorElement) {
+      errorElement.textContent = "";
+      inputElement.classList.remove("error-border");
+      inputElement.classList.remove("success-border");
+    }
+
+    function dinhDangNgayVN(dateString) {
+      if (!dateString) return "";
+      const [year, month, day] = dateString.split("-");
+      return `${day}/${month}/${year}`;
+    }
+
+    function capNhatTienTrinh() {
+      progressText.textContent = `Bước ${currentStep} / ${totalSteps}`;
+      progressBar.style.width = `${(currentStep / totalSteps) * 100}%`;
+
+      if (currentStep === 1) {
+        stepTitle.textContent = "Thông tin cá nhân";
+      } else if (currentStep === 2) {
+        stepTitle.textContent = "Thông tin tài khoản";
+      } else {
+        stepTitle.textContent = "Xác nhận thông tin";
+      }
+    }
+
+    function hienThiStep(stepNumber) {
+      document.querySelectorAll(".step").forEach((step) => {
+        step.classList.remove("active");
+      });
+
+      document.getElementById(`step${stepNumber}`).classList.add("active");
+      currentStep = stepNumber;
+      capNhatTienTrinh();
+
+      if (currentStep === 3) {
+        capNhatXacNhan();
+      }
+    }
+
+    function capNhatXacNhan() {
+      confirmHoTen.textContent = hoTen.value.trim();
+      confirmNgaySinh.textContent = dinhDangNgayVN(ngaySinh.value);
+      confirmGioiTinh.textContent = gioiTinh.value;
+      confirmEmail.textContent = email.value.trim();
+      confirmMatKhau.textContent = matKhau.value;
+      confirmXacNhanMatKhau.textContent = xacNhanMatKhau.value;
+    }
+
+    function validateHoTen() {
+      const value = hoTen.value.trim();
+
+      if (value === "") {
+        hienThiLoi(hoTen, hoTenError, "Họ tên không được để trống");
+        return false;
+      }
+
+      if (!hoTenRegex.test(value)) {
+        hienThiLoi(hoTen, hoTenError, "Họ tên chỉ được chứa chữ cái và khoảng trắng");
+        return false;
+      }
+
+      if (value.length > 50) {
+        hienThiLoi(hoTen, hoTenError, "Họ tên tối đa 50 ký tự");
+        return false;
+      }
+
+      hienThiHopLe(hoTen, hoTenError);
+      return true;
+    }
+
+    function validateNgaySinh() {
+      const value = ngaySinh.value;
+
+      if (value === "") {
+        hienThiLoi(ngaySinh, ngaySinhError, "Ngày sinh không được để trống");
+        return false;
+      }
+
+      const selectedDate = new Date(value);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedDate > today) {
+        hienThiLoi(ngaySinh, ngaySinhError, "Ngày sinh không được lớn hơn ngày hiện tại");
+        return false;
+      }
+
+      hienThiHopLe(ngaySinh, ngaySinhError);
+      return true;
+    }
+
+    function validateGioiTinh() {
+      const value = gioiTinh.value;
+
+      if (value === "") {
+        hienThiLoi(gioiTinh, gioiTinhError, "Vui lòng chọn giới tính");
+        return false;
+      }
+
+      hienThiHopLe(gioiTinh, gioiTinhError);
+      return true;
+    }
+
+    function validateEmail() {
+      const value = email.value.trim();
+
+      if (value === "") {
+        hienThiLoi(email, emailError, "Email không được để trống");
+        return false;
+      }
+
+      if (!emailRegex.test(value)) {
+        hienThiLoi(email, emailError, "Email không đúng định dạng");
+        return false;
+      }
+
+      hienThiHopLe(email, emailError);
+      return true;
+    }
+
+    function validateMatKhau() {
+      const value = matKhau.value.trim();
+
+      if (value === "") {
+        hienThiLoi(matKhau, matKhauError, "Mật khẩu không được để trống");
+        return false;
+      }
+
+      if (!matKhauRegex.test(value)) {
+        hienThiLoi(
+          matKhau,
+          matKhauError,
+          "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ thường, chữ hoa và số"
+        );
+        return false;
+      }
+
+      hienThiHopLe(matKhau, matKhauError);
+      return true;
+    }
+
+    function validateXacNhanMatKhau() {
+      const value = xacNhanMatKhau.value.trim();
+
+      if (value === "") {
+        hienThiLoi(
+          xacNhanMatKhau,
+          xacNhanMatKhauError,
+          "Vui lòng nhập lại mật khẩu"
+        );
+        return false;
+      }
+
+      if (value !== matKhau.value.trim()) {
+        hienThiLoi(
+          xacNhanMatKhau,
+          xacNhanMatKhauError,
+          "Mật khẩu xác nhận không khớp"
+        );
+        return false;
+      }
+
+      hienThiHopLe(xacNhanMatKhau, xacNhanMatKhauError);
+      return true;
+    }
+
+    function validateStep1() {
+      const isHoTenValid = validateHoTen();
+      const isNgaySinhValid = validateNgaySinh();
+      const isGioiTinhValid = validateGioiTinh();
+
+      return isHoTenValid && isNgaySinhValid && isGioiTinhValid;
+    }
+
+    function validateStep2() {
+      const isEmailValid = validateEmail();
+      const isMatKhauValid = validateMatKhau();
+      const isXacNhanMatKhauValid = validateXacNhanMatKhau();
+
+      return isEmailValid && isMatKhauValid && isXacNhanMatKhauValid;
+    }
+
+    hoTen.addEventListener("input", validateHoTen);
+    ngaySinh.addEventListener("change", validateNgaySinh);
+    gioiTinh.addEventListener("change", validateGioiTinh);
+
+    email.addEventListener("input", validateEmail);
+    matKhau.addEventListener("input", () => {
+      validateMatKhau();
+      if (xacNhanMatKhau.value.trim() !== "") {
+        validateXacNhanMatKhau();
+      }
+    });
+    xacNhanMatKhau.addEventListener("input", validateXacNhanMatKhau);
+
+    nextBtn1.addEventListener("click", function () {
+      if (validateStep1()) {
+        hienThiStep(2);
+      }
+    });
+
+    nextBtn2.addEventListener("click", function () {
+      if (validateStep2()) {
+        capNhatXacNhan();
+        hienThiStep(3);
+      }
+    });
+
+    prevBtn2.addEventListener("click", function () {
+      hienThiStep(1);
+    });
+
+    prevBtn3.addEventListener("click", function () {
+      hienThiStep(2);
+    });
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const step1Valid = validateStep1();
+      const step2Valid = validateStep2();
+
+      if (step1Valid && step2Valid) {
+        capNhatXacNhan();
+        alert("Đăng ký thành công!");
+      }
+    });
+
+    capNhatTienTrinh();
+  </script>
+</body>
+</html>
